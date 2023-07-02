@@ -58,6 +58,7 @@ public abstract class User {
     @Builder
     public static class Contact {
         private String phone;
+        @Column(unique = true)
         private String email;
     }
 
