@@ -11,12 +11,15 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@Getter
 @Table(name = "credit_cards")
 public class CreditCard {
 
@@ -28,7 +31,8 @@ public class CreditCard {
     private String expirationDate;
     private String cvv;
 
+    @Setter
     @ManyToOne
-    @JoinColumn(name = "guest_id", nullable = false)
-    private Guest guest;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

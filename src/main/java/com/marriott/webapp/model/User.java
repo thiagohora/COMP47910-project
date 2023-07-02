@@ -49,7 +49,7 @@ public abstract class User {
         private String street;
         private String city;
         private String state;
-        private String zip;
+        private String zipcode;
         private String country;
     }
 
@@ -57,8 +57,8 @@ public abstract class User {
     @Data
     @Builder
     public static class Contact {
-        private String phoneNumber;
-        private String emailAddress;
+        private String phone;
+        private String email;
     }
 
 
@@ -75,10 +75,10 @@ public abstract class User {
     @Embedded
     protected Address address;
 
-    @OneToMany(mappedBy = "guest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected List<CreditCard> creditCards;
 
-    @OneToMany(mappedBy = "guest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected List<Reservation> reservations;
 
     protected Credentials credentials;

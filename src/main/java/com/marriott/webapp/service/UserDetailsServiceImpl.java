@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import java.io.Serial;
@@ -16,7 +17,34 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
-class UserDetailsServiceImpl implements UserDetailsService {
+class UserDetailsServiceImpl implements UserDetailsService, UserDetailsManager {
+
+    private final MemberService memberService;
+
+    @Override
+    public void createUser(UserDetails user) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public void updateUser(UserDetails user) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public void deleteUser(String username) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public void changePassword(String oldPassword, String newPassword) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public boolean userExists(String username) {
+        return false;
+    }
 
     @Builder
     private record UserDetailsImpl(String username, String password) implements UserDetails {

@@ -12,7 +12,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -20,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@Getter
 @Table(name = "rooms")
 public class Room {
 
@@ -30,6 +33,7 @@ public class Room {
     private String roomType;
     private int capacity;
     private double price;
+    @Setter
     private double discountPrice;
     private boolean isAvailable;
 

@@ -3,6 +3,7 @@ package com.marriott.webapp.api;
 import com.marriott.webapp.model.Reservation;
 import com.marriott.webapp.service.ReservationRequest;
 import com.marriott.webapp.service.ReservationService;
+import com.marriott.webapp.service.ReservationsRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reservations")
+@RequestMapping("/api/reservations")
 public class ReservationController {
 
     private final ReservationService reservationService;
@@ -45,4 +46,10 @@ public class ReservationController {
         final Reservation reservation = reservationService.cancelReservation(reservationId);
         return ResponseEntity.ok(reservation);
     }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<List<Reservation>> bookRooms(@RequestBody ReservationsRequest request) {
+        return  ResponseEntity.status(201).body(reservationService.bookRooms(request.getRoomIds(), request.getStartDate(), request.getEndDate(), request.getCreditCardId()));
+    }
+
 }

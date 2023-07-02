@@ -13,8 +13,9 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -22,7 +23,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Data
+@Getter
 @Table(name = "reservations")
 public class Reservation {
 
@@ -36,7 +37,7 @@ public class Reservation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Guest guest;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
@@ -44,6 +45,8 @@ public class Reservation {
 
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
+
+    @Setter
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
