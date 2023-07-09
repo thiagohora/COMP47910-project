@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import static com.marriott.webapp.model.Reservation.ReservationStatus;
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -46,11 +45,14 @@ public class ReservationService {
 
         final List<Room> rooms = roomRepository.findAllById(roomIds);
 
+        final var reservationGuest = userRepository.findByContactEmail(guest.getContact().getEmail())
+                .orElseGet(() -> userRepository.save(guest));
+
         // This is a basic implementation. You should add more logic here,
         // like checking if the room is available for the specified dates.
         final Reservation reservation = Reservation.builder()
                                             .rooms(Set.copyOf(rooms))
-                                            .user(guest)
+                                            .user(reservationGuest)
                                             .checkInDate(startDate)
                                             .checkOutDate(endDate)
                                             .status(ReservationStatus.ACTIVE)
@@ -67,7 +69,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation cancelReservation(final Long reservationId) {
+    public void cancelReservation(final Long reservationId) {
         final Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid reservation id"));
 
@@ -82,7 +84,7 @@ public class ReservationService {
         }
 
         reservation.setStatus(ReservationStatus.CANCELLED);
-        return reservationRepository.save(reservation);
+        reservationRepository.save(reservation);
     }
 
     @Transactional
@@ -129,4 +131,13 @@ public class ReservationService {
                     .build();
     }
 
+    @Transactional(readOnly = true)
+    public List<Reservation> findByNameAndSurnameAndEmail(final String name, final String surname, final String email) {
+        return reservationRepository.findByNameAndSurnameAndEmail(name, surname, email);
+    }
+
+    @Transactional(readOnly = true)
+    public Reservation getReservation(final Long reservationId) {
+        return reservationRepository.findById(reservationId).orElseThrow(EntityNotFoundException::new);
+    }
 }

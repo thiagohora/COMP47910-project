@@ -13,6 +13,5 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue(value = "guest")
 public class Guest extends User {
-
     // getters and setters
 }

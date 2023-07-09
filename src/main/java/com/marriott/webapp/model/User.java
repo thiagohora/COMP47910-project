@@ -89,7 +89,7 @@ public abstract class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected List<Reservation> reservations;
 
-    protected Credentials credentials;
+    protected Credentials credentials = new Credentials();
 
     // getters and setters
 }

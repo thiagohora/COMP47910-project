@@ -46,55 +46,6 @@ class UserDetailsServiceImpl implements UserDetailsService, UserDetailsManager {
         return false;
     }
 
-    @Builder
-    private record UserDetailsImpl(String username, String password) implements UserDetails {
-
-        @Serial
-        private static final long serialVersionUID = 1L;
-
-        public static UserDetailsImpl build(final User member) {
-            return new UserDetailsImpl(
-                member.getCredentials().getUsername(),
-                member.getCredentials().getPassword()
-            );
-        }
-
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public String getPassword() {
-            return password;
-        }
-
-        @Override
-        public String getUsername() {
-            return username;
-        }
-
-        @Override
-        public boolean isAccountNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isAccountNonLocked() {
-            return true;
-        }
-
-        @Override
-        public boolean isCredentialsNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return true;
-        }
-    }
-
     private final MemberRepository memberRepository;
 
     @Override

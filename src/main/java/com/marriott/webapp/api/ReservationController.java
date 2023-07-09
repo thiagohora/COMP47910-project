@@ -2,6 +2,7 @@ package com.marriott.webapp.api;
 
 import com.marriott.webapp.model.Reservation;
 import com.marriott.webapp.service.ReservationRequest;
+import com.marriott.webapp.service.ReservationResponse;
 import com.marriott.webapp.service.ReservationService;
 import com.marriott.webapp.service.ReservationsRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,26 +27,42 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@RequestBody final ReservationRequest reservationRequest) {
+    public ResponseEntity<ReservationResponse> createReservation(@RequestBody final ReservationRequest reservationRequest) {
         final Reservation reservation = reservationService.createReservation(
                 reservationRequest.getRoomIds(),
                 reservationRequest.getGuest(),
                 reservationRequest.getStartDate(),
                 reservationRequest.getEndDate(),
                 reservationRequest.getCreditCard());
-        return ResponseEntity.ok(reservation);
+        return ResponseEntity.ok(ReservationResponse.fromReservation(reservation));
     }
 
-    @GetMapping
+    @GetMapping("/guest")
+    public List<ReservationResponse> getGuestReservations(@RequestParam String name,
+                                                          @RequestParam String surname,
+                                                          @RequestParam String email) {
+        return reservationService.findByNameAndSurnameAndEmail(name, surname, email)
+                .stream()
+                .map(ReservationResponse::fromReservation)
+                .toList();
+    }
+
+    @GetMapping("/{reservationId}")
+    public ResponseEntity<ReservationResponse> getReservation(@PathVariable final Long reservationId) {
+        final Reservation reservation = reservationService.getReservation(reservationId);
+        return ResponseEntity.ok(ReservationResponse.fromReservation(reservation));
+    }
+
+    @GetMapping("/guest/{guestId}")
     public ResponseEntity<List<Reservation>> getReservationsForGuest(@RequestParam final Long guestId) {
         final List<Reservation> reservations = reservationService.getReservationsForGuest(guestId);
         return ResponseEntity.ok(reservations);
     }
 
     @PutMapping("/{reservationId}/cancel")
-    public ResponseEntity<Reservation> cancelReservation(@PathVariable final Long reservationId) {
-        final Reservation reservation = reservationService.cancelReservation(reservationId);
-        return ResponseEntity.ok(reservation);
+    public ResponseEntity<Void> cancelReservation(@PathVariable final Long reservationId) {
+        reservationService.cancelReservation(reservationId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/bulk")

@@ -1,12 +1,5 @@
 package com.marriott.webapp.service;
 
-import com.marriott.webapp.model.User;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -17,14 +10,14 @@ public class RegistrationRequest {
         private String street;
         private String city;
         private String state;
-        private String zip;
+        private String zipcode;
         private String country;
     }
 
     @Data
     public class Contact {
-        private String phoneNumber;
-        private String emailAddress;
+        private String phone;
+        private String email;
     }
 
     private String name;
