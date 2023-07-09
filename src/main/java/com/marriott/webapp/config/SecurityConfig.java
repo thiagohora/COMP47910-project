@@ -1,83 +1,60 @@
 package com.marriott.webapp.config;
 
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.ObjectUtils;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-//@Configuration
-//@EnableWebSecurity
-public class SecurityConfig {
-/*
+import java.io.IOException;
+
+@Configuration
+class SecurityConfig {
+
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:8081")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        //.allowedHeaders("Header1", "Header2", "Header3")
+                        //.exposedHeaders("Header1", "Header2")
+                        .allowCredentials(true).maxAge(3600);
+            }
+        };
     }
 
     @Bean
-    public AuthenticationManager authManager(final HttpSecurity http,
-                                             final UserDetailsService userDetailsService,
-                                             final PasswordEncoder passwordEncoder) throws Exception {
+    public Filter securityHeadersFilter() {
 
-        final var authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        return new Filter() {
+            @Override
+            public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+                    throws IOException, ServletException {
+                var httpServletResponse = (HttpServletResponse) response;
+                httpServletResponse.setHeader("Content-Security-Policy", "default-src 'self'");
+                chain.doFilter(request, response);
+            }
 
-        authenticationManagerBuilder
-                .authenticationProvider(new AuthenticationProvider() {
+            @Override
+            public void init(FilterConfig filterConfig) throws ServletException {
+                // Initialization code can be put here
+            }
 
-                    @Override
-                    public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
-
-                        final String username = (authentication.getPrincipal() == null) ? "NONE_PROVIDED" : authentication.getName();
-                        if (ObjectUtils.isEmpty(username)) {
-                            throw new BadCredentialsException("invalid login details");
-                        }
-
-                        try {
-                            final UserDetails user = userDetailsService.loadUserByUsername(username);
-                            return createSuccessfulAuthentication(authentication, user);
-                        } catch (final UsernameNotFoundException exception) {
-                            throw new BadCredentialsException("invalid login details");
-                        }
-                    }
-
-                    private Authentication createSuccessfulAuthentication(final Authentication authentication,
-                                                                          final UserDetails user) {
-                        final var token = new UsernamePasswordAuthenticationToken(
-                            user.getUsername(),
-                            authentication.getCredentials(),
-                            user.getAuthorities()
-                        );
-
-                        token.setDetails(authentication.getDetails());
-                        return token;
-                    }
-
-                    @Override
-                    public boolean supports(final Class<?> authentication) {
-                        return authentication.equals(UsernamePasswordAuthenticationToken.class);
-                    }
-
-                })
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder);
-
-        return authenticationManagerBuilder.build();
+            @Override
+            public void destroy() {
+                // Destruction code can be put here
+            }
+        };
     }
-
- */
 
 }
 

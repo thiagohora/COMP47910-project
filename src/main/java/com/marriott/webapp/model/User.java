@@ -1,5 +1,6 @@
 package com.marriott.webapp.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -25,7 +26,7 @@ import java.util.List;
 
 @Entity
 @SuperBuilder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@JsonCreator))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -35,6 +36,8 @@ public abstract class User {
     @Embeddable
     @Data
     @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@JsonCreator))
     public static class Credentials {
         @Column(unique = true)
         private String username;
@@ -45,6 +48,8 @@ public abstract class User {
     @Embeddable
     @Data
     @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@JsonCreator))
     public static class Address {
         private String street;
         private String city;
@@ -56,6 +61,8 @@ public abstract class User {
     @Embeddable
     @Data
     @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@JsonCreator))
     public static class Contact {
         private String phone;
         @Column(unique = true)

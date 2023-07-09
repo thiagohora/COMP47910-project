@@ -44,9 +44,7 @@ public class OAuth2Config {
         http
             .authorizeHttpRequests(authorize ->
                 authorize
-                    .requestMatchers("/auth/**").permitAll()
-                    .anyRequest()
-                    .authenticated()
+                    .requestMatchers("/**").permitAll()
             )
             .csrf()
                 .disable()

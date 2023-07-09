@@ -22,7 +22,6 @@ public class MemberController {
     private final MemberService memberService;
     private final UserService userService;
 
-
     @PostMapping("/register")
     public ResponseEntity<StarwoodMember> register(@RequestBody final RegistrationRequest registrationRequest) {
         final var registeredMember = memberService.register(

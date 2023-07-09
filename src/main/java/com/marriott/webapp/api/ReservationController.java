@@ -6,6 +6,7 @@ import com.marriott.webapp.service.ReservationService;
 import com.marriott.webapp.service.ReservationsRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,11 +28,11 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<Reservation> createReservation(@RequestBody final ReservationRequest reservationRequest) {
         final Reservation reservation = reservationService.createReservation(
-                reservationRequest.getRoomId(),
+                reservationRequest.getRoomIds(),
                 reservationRequest.getGuest(),
                 reservationRequest.getStartDate(),
                 reservationRequest.getEndDate(),
-                reservationRequest.getCreditCardNumber());
+                reservationRequest.getCreditCard());
         return ResponseEntity.ok(reservation);
     }
 
@@ -48,6 +49,7 @@ public class ReservationController {
     }
 
     @PostMapping("/bulk")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Reservation>> bookRooms(@RequestBody ReservationsRequest request) {
         return  ResponseEntity.status(201).body(reservationService.bookRooms(request.getRoomIds(), request.getStartDate(), request.getEndDate(), request.getCreditCardId()));
     }

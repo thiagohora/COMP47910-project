@@ -15,8 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
-import static com.marriott.webapp.model.Reservation.*;
+import static com.marriott.webapp.model.Reservation.ReservationStatus;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -29,16 +30,26 @@ public class ReservationService {
     private final AuthenticationFacade authenticationFacade;
 
     @Transactional
-    public Reservation createReservation(final Long roomId,
+    public Reservation createReservation(final List<Long> roomIds,
                                          final Guest guest,
                                          final LocalDate startDate,
                                          final LocalDate endDate,
                                          final String creditCardNumber) {
+
+        if (startDate.isAfter(endDate)) {
+            throw new ClientErrorException("Invalid date range");
+        }
+
+        if (roomIds.isEmpty()) {
+            throw new ClientErrorException("At least one room must be selected");
+        }
+
+        final List<Room> rooms = roomRepository.findAllById(roomIds);
+
         // This is a basic implementation. You should add more logic here,
         // like checking if the room is available for the specified dates.
-        final Room room = roomRepository.getReferenceById(roomId);
-        final Reservation reservation = builder()
-                                            .room(room)
+        final Reservation reservation = Reservation.builder()
+                                            .rooms(Set.copyOf(rooms))
                                             .user(guest)
                                             .checkInDate(startDate)
                                             .checkOutDate(endDate)
@@ -61,7 +72,7 @@ public class ReservationService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid reservation id"));
 
         if (reservation.getStatus() != ReservationStatus.ACTIVE) {
-            throw new IllegalStateException("Cannot cancel a reservation that is not active");
+            throw new SystemConflictException("Cannot cancel a reservation that is not active");
         }
 
         final LocalDate now = LocalDate.now();
@@ -83,11 +94,11 @@ public class ReservationService {
         final var member = (StarwoodMember) getAuthenticatedMember();
         final var creditCard = getCreditCard(member, creditCardId);
 
-        List<Room> rooms = roomRepository.findAllById(roomIds);
+        final List<Room> rooms = roomRepository.findAllById(roomIds);
 
-        List<Reservation> reservations = createReservation(member, rooms, startDate, endDate, creditCard);
+        final var reservation = createReservation(member, rooms, startDate, endDate, creditCard);
 
-        return reservationRepository.saveAll(reservations);
+        return List.of(reservationRepository.save(reservation));
     }
 
     private User getAuthenticatedMember() {
@@ -101,23 +112,21 @@ public class ReservationService {
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Invalid credit card id"));
     }
 
-    private List<Reservation> createReservation(final StarwoodMember member,
+    private Reservation createReservation(final StarwoodMember member,
                                                 final List<Room> rooms,
                                                 final LocalDate startDate,
                                                 final LocalDate endDate,
                                                 final CreditCard creditCard) {
 
-        return rooms.stream()
-                .map(room -> Reservation.builder()
-                                        .room(room)
-                                        .user(member)
-                                        .checkInDate(startDate)
-                                        .checkOutDate(endDate)
-                                        .status(ReservationStatus.ACTIVE)
-                                        // You should probably encrypt the credit card number and not store it in plain text.
-                                        .creditCardNumber(creditCard.getCardNumber())
-                                        .build())
-                .collect(toList());
+        return Reservation.builder()
+                    .rooms(Set.copyOf(rooms))
+                    .user(member)
+                    .checkInDate(startDate)
+                    .checkOutDate(endDate)
+                    .status(ReservationStatus.ACTIVE)
+                    // You should probably encrypt the credit card number and not store it in plain text.
+                    .creditCardNumber(creditCard.getCardNumber())
+                    .build();
     }
 
 }
