@@ -9,8 +9,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DiscriminatorValue(value = "starwood")
+@DiscriminatorValue(value = StarwoodMember.STARWOOD)
 public class StarwoodMember extends User {
+
+    public static final String STARWOOD = "starwood";
 
     public void setUsername(final String username) {
         if (this.credentials == null) {
@@ -26,5 +28,10 @@ public class StarwoodMember extends User {
         }
 
         this.credentials.setPassword(password);
+    }
+
+    @Override
+    public String getType() {
+        return STARWOOD;
     }
 }

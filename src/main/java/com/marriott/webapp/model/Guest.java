@@ -1,17 +1,23 @@
 package com.marriott.webapp.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DiscriminatorValue(value = "guest")
+@DiscriminatorValue(value = Guest.GUEST)
 public class Guest extends User {
+    public static final String GUEST = "guest";
+
     // getters and setters
+
+
+    @Override
+    public String getType() {
+        return GUEST;
+    }
 }

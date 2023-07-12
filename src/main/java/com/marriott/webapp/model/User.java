@@ -83,7 +83,7 @@ public abstract class User {
     @Embedded
     protected Address address;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     protected List<CreditCard> creditCards;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -91,5 +91,6 @@ public abstract class User {
 
     protected Credentials credentials = new Credentials();
 
+    abstract public String getType();
     // getters and setters
 }

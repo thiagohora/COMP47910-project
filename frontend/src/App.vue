@@ -10,6 +10,8 @@
       <router-link to="/reservations">My Reservations</router-link>
       |
       <router-link to="/book-room">Book a Room</router-link>
+      |
+      <router-link v-if="isLoggedIn" to="/card-register">Manage Cards</router-link>
     </nav>
     <router-view/>
   </div>
@@ -17,7 +19,12 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  computed: {
+    isLoggedIn() {
+      return localStorage.getItem('authToken') !== null;
+    }
+  }
 }
 </script>
 

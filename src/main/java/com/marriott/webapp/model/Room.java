@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -32,9 +31,6 @@ public class Room {
     private String roomType;
     private int capacity;
     private double price;
-    @Setter
-    private double discountPrice;
-    private boolean isAvailable;
 
     @OneToMany(mappedBy = "rooms", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Reservation> reservations;

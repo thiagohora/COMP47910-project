@@ -8,7 +8,6 @@ import com.marriott.webapp.model.ReservationRepository;
 import com.marriott.webapp.model.Room;
 import com.marriott.webapp.model.RoomRepository;
 import com.marriott.webapp.model.StarwoodMember;
-import com.marriott.webapp.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,8 +63,8 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<Reservation> getReservationsForGuest(final Long guestId) {
-        return reservationRepository.findAllByUserId(guestId);
+    public List<Reservation> getReservationsForUser() {
+        return reservationRepository.findAllByUserId(getAuthenticatedMember().getId());
     }
 
     @Transactional
@@ -93,7 +92,7 @@ public class ReservationService {
                                        final LocalDate endDate,
                                        final Long creditCardId) {
 
-        final var member = (StarwoodMember) getAuthenticatedMember();
+        final var member = getAuthenticatedMember();
         final var creditCard = getCreditCard(member, creditCardId);
 
         final List<Room> rooms = roomRepository.findAllById(roomIds);
@@ -103,9 +102,8 @@ public class ReservationService {
         return List.of(reservationRepository.save(reservation));
     }
 
-    private User getAuthenticatedMember() {
-        final var authentication = authenticationFacade.getAuthentication();
-        return userRepository.findById(Long.valueOf(authentication.getName())).orElseThrow();
+    private StarwoodMember getAuthenticatedMember() {
+        return authenticationFacade.getStarwoodMember().orElseThrow();
     }
 
     private CreditCard getCreditCard(final StarwoodMember member, final Long creditCardId) {

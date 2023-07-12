@@ -3,7 +3,6 @@ package com.marriott.webapp.service;
 import com.marriott.webapp.model.Room;
 import com.marriott.webapp.model.RoomRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,14 +28,4 @@ public class RoomService {
         return roomRepository.findAvailableRooms(startDate, endDate);
     }
 
-    private boolean isStarwoodMember() {
-        Authentication authentication = authenticationFacade.getAuthentication();
-        return authentication != null && authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_STARWOOD_MEMBER"));
-    }
-
-    private void applyDiscount(final Room room) {
-        double discountedPrice = room.getDiscountPrice() * (1 - DISCOUNT);
-        room.setDiscountPrice(discountedPrice);
-    }
 }

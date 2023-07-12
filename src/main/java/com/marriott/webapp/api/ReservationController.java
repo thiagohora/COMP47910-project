@@ -53,10 +53,11 @@ public class ReservationController {
         return ResponseEntity.ok(ReservationResponse.fromReservation(reservation));
     }
 
-    @GetMapping("/guest/{guestId}")
-    public ResponseEntity<List<Reservation>> getReservationsForGuest(@RequestParam final Long guestId) {
-        final List<Reservation> reservations = reservationService.getReservationsForGuest(guestId);
-        return ResponseEntity.ok(reservations);
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<ReservationResponse>> getMyReservations() {
+        final List<Reservation> reservations = reservationService.getReservationsForUser();
+        return ResponseEntity.ok(reservations.stream().map(ReservationResponse::fromReservation).toList());
     }
 
     @PutMapping("/{reservationId}/cancel")

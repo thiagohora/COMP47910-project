@@ -39,6 +39,11 @@ axios.interceptors.response.use(function (response) {
     if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
 
+        if (originalRequest.url.includes('/auth/token') || originalRequest.url.includes('/auth/login')) {
+            refreshTokenService.cleanToken()
+            return Promise.reject(error);
+        }
+
         return refreshTokenService.refreshToken().then(res => {
             if (res.status === 200) {
                 // If the refresh was successful, update the token in the header and retry the original request
@@ -46,9 +51,6 @@ axios.interceptors.response.use(function (response) {
                 originalRequest.headers['Authorization'] = 'Bearer ' + res.data.accessToken;
                 return axios(originalRequest);
             }
-        }).catch(ex => {
-            refreshTokenService.cleanToken(ex)
-            return Promise.reject(ex) 
         });
     }
 

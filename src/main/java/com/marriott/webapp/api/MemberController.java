@@ -7,6 +7,7 @@ import com.marriott.webapp.service.RegistrationRequest;
 import com.marriott.webapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,6 +48,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/{memberId}")
+    @PreAuthorize("isAuthenticated()")
     public void deleteMember(@PathVariable long memberId) {
         userService.deleteMember(memberId);
     }

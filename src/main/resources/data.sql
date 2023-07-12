@@ -1,9 +1,9 @@
 -- Populate rooms
-INSERT INTO rooms (id, room_type, capacity, price, discount_price, is_available) VALUES (1, 'PREMIUM', 2, 150.00, 150*0.9, true);
-INSERT INTO rooms (id, room_type, capacity, price, discount_price, is_available) VALUES (2, 'PRESIDENTIAL', 3, 300.00, 300*0.9, true);
-INSERT INTO rooms (id, room_type, capacity, price, discount_price, is_available) VALUES (3, 'DELUX 1', 2, 100.00, 100*0.9, true);
-INSERT INTO rooms (id, room_type, capacity, price, discount_price, is_available) VALUES (4, 'DELUX 2', 2, 100.00, 100*0.9, true);
-INSERT INTO rooms (id, room_type, capacity, price, discount_price, is_available) VALUES (5, 'ECONOMIC', 1, 50.00, 50*0.9, true);
+INSERT INTO rooms (id, room_type, capacity, price) VALUES (2, 'PRESIDENTIAL', 3, 300.00);
+INSERT INTO rooms (id, room_type, capacity, price) VALUES (3, 'DELUX 1', 2, 100.00);
+INSERT INTO rooms (id, room_type, capacity, price) VALUES (1, 'PREMIUM', 2, 150.00);
+INSERT INTO rooms (id, room_type, capacity, price) VALUES (4, 'DELUX 2', 2, 100.00);
+INSERT INTO rooms (id, room_type, capacity, price) VALUES (5, 'ECONOMIC', 1, 50.00);
 
 
 INSERT INTO user (id, name, surname, username, password, street, city, state, zipcode, phone, email ,type)

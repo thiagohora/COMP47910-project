@@ -5,6 +5,7 @@ import RoomList from '../views/RoomList.vue';
 import ReservationList from '../views/ReservationList.vue';
 import BookRoom from '../views/BookRoom.vue';
 import GuestReservation from '../views/GuestReservation.vue'
+import CreditCardRegister from '../views/CreditCardRegister.vue'
 
 const router = Router.createRouter({
   history: Router.createWebHistory(),
@@ -35,16 +36,14 @@ const router = Router.createRouter({
       {
         path: '/reservations',
         name: 'reservations',
-        component: ReservationList,
-        meta: {
-          requiresAuth: true
+        component: () => {
+          const isLoggedIn = localStorage.getItem('authToken');
+          if (isLoggedIn) {
+              return ReservationList
+          } else {
+              return GuestReservation
+          }
         }
-      },
-      {
-        path: '/reservations',
-        name: 'reservations',
-        component: GuestReservation,
-        meta: { requiresAuth: false }
       },
       {
         path: '/book-room',
@@ -52,6 +51,14 @@ const router = Router.createRouter({
         component: BookRoom,
         meta: {
           requiresAuth: false
+        }
+      },
+      {
+        path: '/card-register',
+        name: 'creditCardRegister',
+        component: CreditCardRegister,
+        meta: {
+          requiresAuth: true
         }
       }
   ]

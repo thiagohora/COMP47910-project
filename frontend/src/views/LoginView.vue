@@ -35,10 +35,16 @@ export default {
         localStorage.setItem('authToken', response.data.accessToken);
         localStorage.setItem('refreshToken', response.data.refreshToken);
 
+        location.href = '/rooms';
+        
         // Redirect to the room list
-        this.$router.push('/rooms');
+        //this.$router.push('/rooms');
+        
       } catch (error) {
         console.error(error);
+
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('refreshToken');
       }
     },
   },

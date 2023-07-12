@@ -12,7 +12,7 @@
         <input v-model="booking.startDate" type="date" class="form-control" @change="checkDates" :min="today" required/>
       </div>
       <div class="mb-3">
-        <input v-model="booking.endDate" type="date" class="form-control" @change="checkDates" :min="startDate || today" required/>
+        <input v-model="booking.endDate" type="date" class="form-control" @change="checkDates" :min="booking.startDate || today" required/>
       </div>
 
       <h2 class="my-4">User Details</h2>

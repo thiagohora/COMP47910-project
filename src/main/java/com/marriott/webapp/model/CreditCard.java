@@ -1,6 +1,7 @@
 package com.marriott.webapp.model;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,9 +28,10 @@ public class CreditCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String cardName;
     private String cardNumber;
     private String expirationDate;
-    private String cvv;
+    private String lastFourDigits;
 
     @Setter
     @ManyToOne
