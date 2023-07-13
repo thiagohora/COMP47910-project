@@ -44,15 +44,13 @@ public class UserService {
 
     }
 
-    public void deleteMember(long memberId) {
-        User user = userRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid member id"));
+    public void deleteMember() {
+        User user = authenticationFacade.getStarwoodMember()
+                .orElseThrow(EntityNotFoundException::new);
 
-        if (!(user instanceof StarwoodMember)) {
-            throw new IllegalArgumentException("The user with id " + memberId + " is not a Starwood member");
-        }
+        user.setInactive(true);
 
-        userRepository.delete(user);
+        userRepository.save(user);
     }
 
     @Transactional

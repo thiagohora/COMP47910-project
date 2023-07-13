@@ -6,7 +6,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue(value = StarwoodMember.STARWOOD)

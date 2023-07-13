@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.marriott.webapp.model.Reservation.ReservationStatus;
@@ -47,14 +48,28 @@ public class ReservationService {
 
         final List<Room> rooms = roomRepository.findAllById(roomIds);
 
-        final var reservationGuest = userRepository.findByContactEmail(guest.getContact().getEmail())
-                .orElseGet(() -> userRepository.save(guest));
+        Optional<Guest> reservationGuest = userRepository.findByContactEmail(guest.getContact().getEmail())
+                .map(user -> guest.toBuilder().id(user.getId()).build());
+
+        //CHECK IF THE USER IS A MEMBER
+        if (reservationGuest.isPresent() && !reservationGuest.get().getType().equals(Guest.GUEST)) {
+            throw new ClientErrorException("Invalid guest");
+        }
+
+        if (reservationGuest.isEmpty()) {
+            //CHECK IF IT IS A NEW USER
+            guest.setInactive(false);
+            final var user = userRepository.save(guest);
+            reservationGuest = Optional.of(user);
+        } else {
+            userRepository.save(reservationGuest.get());
+        }
 
         // This is a basic implementation. You should add more logic here,
         // like checking if the room is available for the specified dates.
         final Reservation reservation = Reservation.builder()
                                             .rooms(Set.copyOf(rooms))
-                                            .user(reservationGuest)
+                                            .user(reservationGuest.get())
                                             .checkInDate(startDate)
                                             .checkOutDate(endDate)
                                             .status(ReservationStatus.ACTIVE)
@@ -137,11 +152,16 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public List<Reservation> findByNameAndSurnameAndEmail(final String name, final String surname, final String email) {
-        return reservationRepository.findByNameAndSurnameAndEmail(name, surname, email);
+        return reservationRepository.findByNameAndSurnameAndEmail(name, surname, email)
+                .stream()
+                .filter(reservation -> reservation.getUser().getType().equals(Guest.GUEST))
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public Reservation getReservation(final Long reservationId) {
-        return reservationRepository.findById(reservationId).orElseThrow(EntityNotFoundException::new);
+        return reservationRepository.findById(reservationId)
+                .filter(reservation -> reservation.getUser().getType().equals(Guest.GUEST))
+                .orElseThrow(EntityNotFoundException::new);
     }
 }

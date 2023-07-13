@@ -6,6 +6,7 @@ import ReservationList from '../views/ReservationList.vue';
 import BookRoom from '../views/BookRoom.vue';
 import GuestReservation from '../views/GuestReservation.vue'
 import CreditCardRegister from '../views/CreditCardRegister.vue'
+import Unregister from '../views/UnregisterView.vue'
 
 const router = Router.createRouter({
   history: Router.createWebHistory(),
@@ -57,6 +58,14 @@ const router = Router.createRouter({
         path: '/card-register',
         name: 'creditCardRegister',
         component: CreditCardRegister,
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/unregister',
+        name: 'unregister',
+        component: Unregister,
         meta: {
           requiresAuth: true
         }

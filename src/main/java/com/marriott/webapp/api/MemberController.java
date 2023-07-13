@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,9 +46,9 @@ public class MemberController {
         return ResponseEntity.ok(registeredMember);
     }
 
-    @DeleteMapping("/{memberId}")
+    @DeleteMapping
     @PreAuthorize("isAuthenticated()")
-    public void deleteMember(@PathVariable long memberId) {
-        userService.deleteMember(memberId);
+    public void deleteMember() {
+        userService.deleteMember();
     }
 }

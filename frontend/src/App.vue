@@ -14,6 +14,8 @@
       <router-link v-if="isLoggedIn" to="/card-register">Manage Cards</router-link>
       |
       <router-link v-if="isLoggedIn" to="" @click.capture="logout">Logout</router-link>
+      |
+      <router-link v-if="isLoggedIn" to="/unregister">Unregister</router-link>
     </nav>
     <router-view/>
   </div>

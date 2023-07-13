@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -21,8 +23,18 @@ public class MemberService {
             throw new SystemConflictException("Username already exists");
         }
 
-        if (memberRepository.findByContactEmail(member.getContact().getEmail()).isPresent()) {
+        final var user = memberRepository.findByContactEmail(member.getContact().getEmail());
+
+        if (user.isPresent() && user.get().getType().equals(StarwoodMember.STARWOOD) ) {
             throw new SystemConflictException("Email already exists");
+        } else if (user.isPresent()) {
+            memberRepository.updateType(user.get().getId(), StarwoodMember.STARWOOD);
+            user.ifPresent(value -> {
+                member.setId(value.getId());
+                member.setCreditCards(new ArrayList<>());
+                member.setReservations(new ArrayList<>());
+                member.setInactive(false);
+            });
         }
 
         if (password.length() < 8) {
@@ -38,6 +50,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public User getByUsername(final String username) {
         return memberRepository.findByCredentialsUsername(username)
+            .filter(user -> !user.getInactive())
             .orElseThrow(EntityNotFoundException::new);
     }
 }

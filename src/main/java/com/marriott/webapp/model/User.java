@@ -20,12 +20,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
 @Entity
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@JsonCreator))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -72,10 +73,15 @@ public abstract class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter
     protected Long id;
 
     protected String name;
     protected String surname;
+
+    @Setter
+    @Column(columnDefinition = "boolean default false")
+    protected Boolean inactive;
 
     @Embedded
     protected Contact contact;
@@ -83,9 +89,11 @@ public abstract class User {
     @Embedded
     protected Address address;
 
+    @Setter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     protected List<CreditCard> creditCards;
 
+    @Setter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected List<Reservation> reservations;
 
