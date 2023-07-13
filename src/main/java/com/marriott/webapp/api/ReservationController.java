@@ -33,8 +33,9 @@ public class ReservationController {
                 reservationRequest.getGuest(),
                 reservationRequest.getStartDate(),
                 reservationRequest.getEndDate(),
-                reservationRequest.getCreditCard());
-        return ResponseEntity.ok(ReservationResponse.fromReservation(reservation));
+                reservationRequest.getCreditCard(),
+                reservationRequest.getCreditCardExpiration());
+        return ResponseEntity.status(201).body(ReservationResponse.fromReservation(reservation));
     }
 
     @GetMapping("/guest")
@@ -66,10 +67,11 @@ public class ReservationController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/bulk")
+    @PostMapping("/members/book")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Reservation>> bookRooms(@RequestBody ReservationsRequest request) {
-        return  ResponseEntity.status(201).body(reservationService.bookRooms(request.getRoomIds(), request.getStartDate(), request.getEndDate(), request.getCreditCardId()));
+    public ResponseEntity<ReservationResponse> bookRooms(@RequestBody ReservationsRequest request) {
+        final var reservation = reservationService.bookRooms(request.getRoomIds(), request.getStartDate(), request.getEndDate(), request.getCreditCardId());
+        return  ResponseEntity.status(201).body(ReservationResponse.fromReservation(reservation));
     }
 
 }

@@ -17,6 +17,7 @@ public class ReservationRequest {
     private LocalDate startDate;
     private LocalDate endDate;
     private String creditCard;
+    private String creditCardExpiration;
 
     // getters and setters
 }

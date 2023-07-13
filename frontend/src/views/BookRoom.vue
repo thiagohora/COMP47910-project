@@ -16,45 +16,48 @@
       </div>
 
       <h2 class="my-4">User Details</h2>
-        <div class="form-group">
-            <label for="name">Name:</label>
-            <input id="name" v-model="booking.name" type="text" class="form-control" maxlength="255" required>
+        <div v-if="!isLoggedIn">
+          <div class="form-group">
+              <label for="name">Name:</label>
+              <input id="name" v-model="booking.name" type="text" class="form-control" maxlength="255" required>
+          </div>
+          <div class="form-group">
+              <label for="surname">Surname:</label>
+              <input id="surname" v-model="booking.surname" type="text" class="form-control" maxlength="255" required>
+          </div>
+          <div class="form-group">
+              <label for="address">Address street:</label>
+              <input id="address" v-model="booking.street" type="text" class="form-control" maxlength="255" required>
+          </div>
+          <div class="form-group">
+              <label for="city">City:</label>
+              <input id="city" v-model="booking.city" type="text" class="form-control" maxlength="255" required>
+          </div>
+          <div class="form-group">
+              <label for="state">State:</label>
+              <input id="state" v-model="booking.state" type="text" class="form-control" maxlength="255" required>
+          </div>
+          <div class="form-group">
+              <label for="zipcode">Zipcode:</label>
+              <input id="zipcode" v-model="booking.zipcode" type="text" class="form-control" maxlength="50" required>
+          </div>
+          <div class="form-group">
+              <label for="country">Country:</label>
+              <input id="country" v-model="booking.country" type="text" class="form-control" maxlength="2" required>
+          </div>
+          <div class="form-group">
+              <label for="phone">Phone Number:</label>
+              <input id="phone" v-model="booking.phone" type="text" class="form-control" maxlength="17" @input="validatePhoneNumber" required>
+          </div>
+          <div class="form-group">
+              <label for="email">Email Address:</label>
+              <input id="email" v-model="booking.email" type="email" maxlength="255" class="form-control" required>
+          </div>
         </div>
-        <div class="form-group">
-            <label for="surname">Surname:</label>
-            <input id="surname" v-model="booking.surname" type="text" class="form-control" maxlength="255" required>
-        </div>
-        <div class="form-group">
-            <label for="address">Address street:</label>
-            <input id="address" v-model="booking.street" type="text" class="form-control" maxlength="255" required>
-        </div>
-        <div class="form-group">
-            <label for="city">City:</label>
-            <input id="city" v-model="booking.city" type="text" class="form-control" maxlength="255" required>
-        </div>
-        <div class="form-group">
-            <label for="state">State:</label>
-            <input id="state" v-model="booking.state" type="text" class="form-control" maxlength="255" required>
-        </div>
-        <div class="form-group">
-            <label for="zipcode">Zipcode:</label>
-            <input id="zipcode" v-model="booking.zipcode" type="text" class="form-control" maxlength="50" required>
-        </div>
-        <div class="form-group">
-            <label for="country">Country:</label>
-            <input id="country" v-model="booking.country" type="text" class="form-control" maxlength="2" required>
-        </div>
-        <div class="form-group">
-            <label for="phone">Phone Number:</label>
-            <input id="phone" v-model="booking.phone" type="text" class="form-control" maxlength="17" @input="validatePhoneNumber" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email Address:</label>
-            <input id="email" v-model="booking.email" type="email" maxlength="255" class="form-control" required>
-        </div>
-        <div class="form-group">
+
+        <div v-if="!isLoggedIn" class="form-group">
           <br />
-          <label for="email">Payment Info:</label >
+          <label for="">Payment Info:</label>
           <br />
           <div class="form-group">
             <div class="card-list">
@@ -162,6 +165,20 @@
           </div>
         </div>
 
+        <div v-if="isLoggedIn" class="mb-3">
+          <div class="form-group">
+            <label for="cards">Registered Cards:</label>
+            <select id="cards" v-model="booking.selectedCard" class="form-control">
+                <option style="text-align: center;" v-for="card in registeredCards" :key="card.id" :value="card.id">Card Number: {{ card.cardNumber }} - From: {{ card.cardName }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="cardCvv" class="card-input__label" aria-label="Card CVV">CVV</label>
+            <input type="tel"  title="CVV" class="card-input__input form-control" @input="checkCvv" v-number-only v-model="booking.selectedCardCvv" id="selectedCardCvv" maxlength="4" minlength="3" autocomplete="off" required/>
+          </div>
+        </div>
+
         <div class="form-group">
           <br />
           <br />
@@ -171,7 +188,7 @@
           <br />
           <p class="text-danger" v-if="dateError">{{ dateError }}</p>
           <p class="text-danger" v-if="!isValid">{{ error }}</p>
-          <button @click="bookRooms" class="btn btn-primary">Book Room</button>
+          <button @click="bookRooms" :disabled="!isFormValid" class="btn btn-primary">Book Room</button>
         </div>
     </form>
   </div>
@@ -183,6 +200,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      registeredCards: [],
       rooms: [],
       booking: {
         selectedRooms: [],
@@ -196,6 +214,7 @@ export default {
         email: '',
         startDate: '',
         endDate: '',
+        selectedCardCvv: '' 
       },
       minCardYear: new Date().getFullYear(),
       mainCardNumber: '',
@@ -246,9 +265,44 @@ export default {
     }
   },
   computed: {
+    isFormValid() {
+
+      if (!this.isLoggedIn) {
+        return this.isDateValid &&
+          this.booking.selectedRooms.length > 0 &&
+          this.booking.name &&
+          this.booking.surname &&
+          this.booking.street &&
+          this.booking.city &&
+          this.booking.zipcode &&
+          this.booking.country &&
+          this.booking.phone &&
+          this.booking.email &&
+          this.booking.country &&
+          this.valueFields.cardName &&
+          this.valueFields.cardNumber && this.valueFields.cardNumber.length === 19 &&
+          this.valueFields.cardMonth &&
+          this.valueFields.cardYear &&
+          this.valueFields.cardCvv && this.valueFields.cardCvv.length >= 3
+      }
+
+      return this.isDateValid &&
+        this.booking.selectedRooms.length > 0 &&
+        this.booking.selectedCard &&
+        this.isCvvValid;
+    },
+    isDateValid() {
+      return this.booking.startDate && this.booking.endDate && this.booking.startDate <= this.booking.endDate;
+    },
+    isCvvValid() {
+      return this.booking.selectedCardCvv && this.booking.selectedCardCvv.length >= 3;
+    },
     minCardMonth () {
       if (this.valueFields.cardYear === this.minCardYear) return new Date().getMonth() + 1
       return 1
+    },
+    isLoggedIn() {
+      return localStorage.getItem('authToken') !== null;
     }
   },
   watch: {
@@ -259,6 +313,10 @@ export default {
     }
   },
   methods: {
+    checkCvv() {
+      const value = this.booking.selectedCardCvv.replace(/\D/g, '')
+      this.booking.selectedCardCvv = value
+    },
     validatePhoneNumber() {
       const regex = /^\+\d{1,3}\d{1,14}$/;
       this.isValid = regex.test(this.booking.phone);
@@ -367,41 +425,75 @@ export default {
             }
     },
     async bookRooms() {
-        const reservation = {
-            guest: {
-              type: 'guest',
-              name: this.booking.name,
-              surname: this.booking.surname,
-              address: {
-                street: this.booking.street,
-                city: this.booking.city,
-                state: this.booking.state,
-                zipcode: this.booking.zipcode,
-                country: this.booking.country
-              },
-              contact: {
-                email: this.booking.email,
-                phone: this.booking.phone
-              }
+
+      if (this.isLoggedIn) {
+         await this.memberBook()
+         return
+      }
+
+      const reservation = {
+          guest: {
+            type: 'guest',
+            name: this.booking.name,
+            surname: this.booking.surname,
+            address: {
+              street: this.booking.street,
+              city: this.booking.city,
+              state: this.booking.state,
+              zipcode: this.booking.zipcode,
+              country: this.booking.country
             },
-            creditCard: `${this.valueFields.cardNumber}/${this.valueFields.cardMonth}-${this.valueFields.cardYear}/${this.valueFields.cardCvv}`,
-            startDate: this.booking.startDate, 
-            endDate: this.booking.endDate, 
-            roomIds: this.booking.selectedRooms
-        };
+            contact: {
+              email: this.booking.email,
+              phone: this.booking.phone
+            }
+          },
+          creditCard: `${this.valueFields.cardNumber}`,
+          creditCardExpiration: `${this.valueFields.cardMonth}/${this.valueFields.cardYear}`,
+          startDate: this.booking.startDate, 
+          endDate: this.booking.endDate, 
+          roomIds: this.booking.selectedRooms
+      };
+
+      try {
+          await axios.post('/api/reservations', reservation);
+          alert('Rooms booked successfully!');
+          this.selectedRooms = [];
+      } catch (error) {
+          console.error(error);
+      }
+    },
+    async memberBook() {
+      const reservation = {
+          creditCardId: `${this.booking.selectedCard}`,
+          startDate: this.booking.startDate, 
+          endDate: this.booking.endDate, 
+          roomIds: this.booking.selectedRooms
+      };
 
 
-        try {
-            await axios.post('/api/reservations', reservation);
-            alert('Rooms booked successfully!');
-            this.selectedRooms = [];
-        } catch (error) {
-            console.error(error);
-        }
-    }
+      try {
+          await axios.post('/api/reservations/members/book', reservation);
+          alert('Rooms booked successfully!');
+          this.selectedRooms = [];
+      } catch (error) {
+          console.error(error);
+      }
+    },
+    async getRegisteredCards() {
+      try {
+          const response = await axios.get(`/api/members/creditcards`)
+          this.registeredCards = response.data;
+      } catch(error) { 
+          this.registeredCards = [];
+      }
+    },
   },
-  created() {
+  mounted() {
     this.getRooms();
+
+    if (this.isLoggedIn)
+      this.getRegisteredCards();
   }
 }
 </script>

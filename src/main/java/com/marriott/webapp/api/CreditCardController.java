@@ -32,7 +32,7 @@ public class CreditCardController {
 
     @DeleteMapping("/{cardId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> addCreditCard(@PathVariable final long cardId) {
+    public ResponseEntity<Void> deleteCreditCard(@PathVariable final long cardId) {
         userService.deleteCreditCard(cardId);
         return ResponseEntity.noContent().build();
     }

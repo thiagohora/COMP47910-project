@@ -12,6 +12,8 @@
       <router-link to="/book-room">Book a Room</router-link>
       |
       <router-link v-if="isLoggedIn" to="/card-register">Manage Cards</router-link>
+      |
+      <router-link v-if="isLoggedIn" to="" @click.capture="logout">Logout</router-link>
     </nav>
     <router-view/>
   </div>
@@ -24,7 +26,15 @@ export default {
     isLoggedIn() {
       return localStorage.getItem('authToken') !== null;
     }
-  }
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('refreshToken')
+
+      location.href = '/login';
+    }
+  }  
 }
 </script>
 

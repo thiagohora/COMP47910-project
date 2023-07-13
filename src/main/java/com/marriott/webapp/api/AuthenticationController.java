@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +44,11 @@ public class AuthenticationController {
 
     @PostMapping("/token")
     public ResponseEntity<?> token(final @RequestBody TokenDTO request) {
+
+        if (!StringUtils.hasText(request.getRefreshToken())) {
+            throw new InvalidBearerTokenException("Token empty");
+        }
+
         final Authentication authentication = refreshTokenAuthProvider.authenticate(
             new BearerTokenAuthenticationToken(request.getRefreshToken())
         );

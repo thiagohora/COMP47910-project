@@ -1,5 +1,6 @@
 package com.marriott.webapp.service;
 
+import com.marriott.webapp.config.AESUtil;
 import com.marriott.webapp.model.CreditCard;
 import com.marriott.webapp.model.Guest;
 import com.marriott.webapp.model.MemberRepository;
@@ -26,13 +27,15 @@ public class ReservationService {
     private final RoomRepository roomRepository;
     private final MemberRepository userRepository;
     private final AuthenticationFacade authenticationFacade;
+    private final AESUtil aesUtil;
 
     @Transactional
     public Reservation createReservation(final List<Long> roomIds,
                                          final Guest guest,
                                          final LocalDate startDate,
                                          final LocalDate endDate,
-                                         final String creditCardNumber) {
+                                         final String creditCardNumber,
+                                         final String creditCardExpiration) {
 
         if (startDate.isAfter(endDate)) {
             throw new ClientErrorException("Invalid date range");
@@ -56,7 +59,9 @@ public class ReservationService {
                                             .checkOutDate(endDate)
                                             .status(ReservationStatus.ACTIVE)
                                             // You should probably encrypt the credit card number and not store it in plain text.
-                                            .creditCardNumber(creditCardNumber)
+                                            .creditCardNumber(aesUtil.encrypt(creditCardNumber))
+                                            .creditCardExpiration(aesUtil.encrypt(creditCardExpiration))
+                                            .creditCardLastFourDigits(creditCardNumber.substring(creditCardNumber.length() - 4))
                                             .build();
 
         return reservationRepository.save(reservation);
@@ -87,10 +92,10 @@ public class ReservationService {
     }
 
     @Transactional
-    public List<Reservation> bookRooms(final List<Long> roomIds,
-                                       final LocalDate startDate,
-                                       final LocalDate endDate,
-                                       final Long creditCardId) {
+    public Reservation bookRooms(final List<Long> roomIds,
+                                 final LocalDate startDate,
+                                 final LocalDate endDate,
+                                 final Long creditCardId) {
 
         final var member = getAuthenticatedMember();
         final var creditCard = getCreditCard(member, creditCardId);
@@ -99,7 +104,7 @@ public class ReservationService {
 
         final var reservation = createReservation(member, rooms, startDate, endDate, creditCard);
 
-        return List.of(reservationRepository.save(reservation));
+        return reservationRepository.save(reservation);
     }
 
     private StarwoodMember getAuthenticatedMember() {
@@ -124,8 +129,9 @@ public class ReservationService {
                     .checkInDate(startDate)
                     .checkOutDate(endDate)
                     .status(ReservationStatus.ACTIVE)
-                    // You should probably encrypt the credit card number and not store it in plain text.
                     .creditCardNumber(creditCard.getCardNumber())
+                    .creditCardExpiration(creditCard.getExpirationDate())
+                    .creditCardLastFourDigits(creditCard.getLastFourDigits())
                     .build();
     }
 

@@ -63,5 +63,11 @@ public class Reservation {
     @JoinColumn(nullable = false)
     private String creditCardNumber;
 
+    @JoinColumn(nullable = false)
+    private String creditCardExpiration;
+
+    @JoinColumn(nullable = false)
+    private String creditCardLastFourDigits;
+
     // getters and setters
 }
