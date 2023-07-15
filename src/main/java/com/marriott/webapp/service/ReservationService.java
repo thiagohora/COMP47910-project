@@ -58,7 +58,6 @@ public class ReservationService {
 
         if (reservationGuest.isEmpty()) {
             //CHECK IF IT IS A NEW USER
-            guest.setInactive(false);
             final var user = userRepository.save(guest);
             reservationGuest = Optional.of(user);
         } else {

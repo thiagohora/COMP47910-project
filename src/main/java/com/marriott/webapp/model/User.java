@@ -81,7 +81,7 @@ public abstract class User {
 
     @Setter
     @Column(columnDefinition = "boolean default false")
-    protected Boolean inactive;
+    protected boolean inactive;
 
     @Embedded
     protected Contact contact;

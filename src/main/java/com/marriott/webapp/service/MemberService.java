@@ -50,7 +50,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public User getByUsername(final String username) {
         return memberRepository.findByCredentialsUsername(username)
-            .filter(user -> !user.getInactive())
+            .filter(user -> !user.isInactive())
             .orElseThrow(EntityNotFoundException::new);
     }
 }
