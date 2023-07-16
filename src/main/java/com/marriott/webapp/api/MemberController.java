@@ -3,7 +3,7 @@ package com.marriott.webapp.api;
 import com.marriott.webapp.model.StarwoodMember;
 import com.marriott.webapp.model.User;
 import com.marriott.webapp.service.MemberService;
-import com.marriott.webapp.service.RegistrationRequest;
+import com.marriott.webapp.service.contracts.RegistrationRequest;
 import com.marriott.webapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

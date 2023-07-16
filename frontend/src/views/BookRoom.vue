@@ -276,7 +276,7 @@ export default {
           this.booking.city &&
           this.booking.zipcode &&
           this.booking.country &&
-          this.booking.phone &&
+          this.booking.phone && this.validatePhoneNumber() &&
           this.booking.email &&
           this.booking.country &&
           this.valueFields.cardName &&
@@ -318,9 +318,10 @@ export default {
       this.booking.selectedCardCvv = value
     },
     validatePhoneNumber() {
-      const regex = /^\+\d{1,3}\d{1,14}$/;
-      this.isValid = regex.test(this.booking.phone);
-      this.error = this.isValid ? '' : 'Invalid phone number';
+      let regex = /^\+?\d+(\(0\))?(x\d+)?$/;
+      this.isValid = regex.test(this.booking.phone) && this.booking.phone.length > 4 && this.booking.phone.length < 16;
+      this.error = this.isValid ? '' : 'Invalid phone number, input only numbers and country code';
+      return this.error.length === 0
     },
     changeName (e) {
       this.valueFields.cardName = e.target.value

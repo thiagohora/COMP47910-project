@@ -97,6 +97,7 @@ public abstract class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected List<Reservation> reservations;
 
+    @Builder.Default
     protected Credentials credentials = new Credentials();
 
     abstract public String getType();
