@@ -42,7 +42,7 @@
               <input id="zipcode" v-model="booking.zipcode" type="text" class="form-control" maxlength="50" required>
           </div>
           <div class="form-group">
-              <label for="country">Country:</label>
+              <label for="country">Country Code:</label>
               <input id="country" v-model="booking.country" type="text" class="form-control" maxlength="2" required>
           </div>
           <div class="form-group">
