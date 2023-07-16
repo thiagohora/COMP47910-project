@@ -134,11 +134,23 @@ export default {
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
       return diffDays >= 1 && reservation.status === 'ACTIVE';
     },
-    cancelReservation(id) {
-      axios.put(`/api/reservations/${id}/cancel`)
-      .then(() => {
+    async cancelReservation(id) {
+      
+      try {
+        await axios.put(`/api/reservations/${id}/cancel`)
         this.getReservations();
-      });
+      } catch(error) {
+ 
+        if (error.response.status === 401) {
+            location.href = '/login';
+        } else if (error.response.status === 400 || error.response.status === 409) {
+          alert("It is not possible to cancel this reservation!")
+          return
+        }
+
+        console.error(error);
+      } 
+      
     }
   }
 }

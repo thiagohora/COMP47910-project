@@ -3,7 +3,9 @@
     <nav>
       <router-link v-if="!isLoggedIn" to="/login">Login</router-link>
       |
-      <router-link to="/register">Register</router-link>
+      <router-link v-if="!isLoggedIn" to="/register">Register</router-link>
+      |
+      <router-link v-if="isLoggedIn" to="/profile">Update Profile</router-link>
       |
       <router-link to="/rooms">Rooms</router-link>
       |
