@@ -30,6 +30,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED, onConstructor = @__(@JsonCreator))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 public abstract class User {

@@ -457,10 +457,17 @@ export default {
       };
 
       try {
-          await axios.post('/api/reservations', reservation);
-          alert('Rooms booked successfully!');
+          const response = await axios.post('/api/reservations', reservation);
+          alert(`Rooms booked successfully! Your reservation id is: ${response.data.reservationId}`);
           this.selectedRooms = [];
       } catch (error) {
+
+          if (error.response.status === 400) {
+            alert('It was not possible to complete the booking, please check the dates, the room availability or your personal data.');
+            this.selectedRooms = [];
+            return
+          }
+
           console.error(error);
       }
     },

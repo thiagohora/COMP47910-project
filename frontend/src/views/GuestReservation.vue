@@ -130,8 +130,6 @@ export default {
     canCancel(checkInDate) {
       const now = new Date();
       const checkIn = new Date(checkInDate);
-      console.log(typeof checkIn)
-      console.log(checkIn)
       const diffTime = Math.abs(checkIn - now);
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
       console.log(diffDays)

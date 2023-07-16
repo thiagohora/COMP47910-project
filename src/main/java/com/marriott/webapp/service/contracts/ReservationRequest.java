@@ -6,13 +6,13 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 @Builder
 @Getter
 public class ReservationRequest {
 
-    private List<Long> roomIds;
+    private Set<Long> roomIds;
     private Guest guest;
     private LocalDate startDate;
     private LocalDate endDate;
