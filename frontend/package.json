@@ -16,7 +16,7 @@
     "vue": "^3.2.13",
     "vue-credit-card-validation": "^1.0.5",
     "vue-paycard": "^0.7.0",
-    "vue-router": "^4.0.3"
+    "vue-router": "^4.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
