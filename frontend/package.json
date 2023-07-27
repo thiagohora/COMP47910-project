@@ -12,7 +12,7 @@
     "@vuelidate/validators": "^2.0.3",
     "axios": "^1.4.0",
     "bootstrap": "^5.3.0",
-    "core-js": "^3.8.3",
+    "core-js": "^3.31.1",
     "vue": "^3.2.13",
     "vue-credit-card-validation": "^1.0.5",
     "vue-paycard": "^0.7.0",
